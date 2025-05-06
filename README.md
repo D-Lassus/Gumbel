@@ -5,105 +5,110 @@ A desktop application built with PySide6 to estimate wind speeds for various ret
 ---
 
 ## Features
-- **Data Input**: Enter multiple pairs of known wind speeds (m/s) and their associated return periods (years).
-- **Gumbel Distribution Fitting**: Automatically fits a Gumbel distribution to the provided data.
-- **Interactive Plotting**: 
+- **Data Input**: Dynamically add/remove rows to enter multiple pairs of known wind speeds (m/s) and their associated return periods (years).
+- **Gumbel Distribution Fitting**: Automatically fits a Gumbel distribution to the provided data using least squares on the reduced variate.
+- **Interactive Plotting**:
     - Displays the Gumbel curve on an interactive Matplotlib graph.
-    - Click on the graph to read the corresponding wind speed and return period.
-    - Automatically draws horizontal lines for user-specified wind speeds or vertical lines for user-specified return periods, showing their calculated counterparts.
+    - Includes standard Matplotlib navigation toolbar (pan, zoom, save).
+    - Click on the graph to read the corresponding wind speed and return period in the status bar.
 - **Dual Query Mode**:
     - Input specific return periods to calculate and plot corresponding wind speeds.
     - Input specific wind speeds to calculate and plot corresponding return periods.
-- **Customizable Views**: Supports both linear and logarithmic scales for the return period axis on the graph.
-- **PDF Report Generation**: Export a comprehensive PDF report including inputs, Gumbel parameters, theoretical derivations, live calculations, and plots.
-- **Dark Theme UI**: Built with PySide6 featuring a dark theme for comfortable viewing.
+    - Queried points are clearly marked on the graph with values and guide lines.
+- **Customisable Views**: Toggle between linear and logarithmic scales for the return period axis on the graph.
+- **PDF Report Generation**: Export a comprehensive PDF report including inputs, fitted Gumbel parameters, a detailed theoretical derivation, an annotated plot matching the GUI, and a summary of plotted points.
+- **Borderless Dark Theme UI**: Modern, dark themed interface built with PySide6 featuring a borderless main window with integrated window controls (minimise, maximise, close).
+- **Project Save/Load**: Save input data, calculated parameters, queried points, and plot settings to a project file (`.gblproj`) and load them back into the application.
 
 ---
 
 ## User Interface Overview
-The application will feature a user-friendly interface with:
-- Input fields for wind speed and return period data.
-- Sections to input specific return periods or wind speeds for querying.
-- An embedded Matplotlib canvas for interactive graph display.
-- Buttons to trigger calculations, plot updates, and PDF report generation.
-- Display areas for Gumbel parameters and calculation results.
+The application features a customised borderless user interface with:
+- A main toolbar containing file operations (Open, Save, Export PDF) and custom window controls (Minimise, Maximise/Restore, Close).
+- A menu bar for standard application actions.
+- A left panel with:
+    - A table for dynamic input of return period and wind speed data points.
+    - Controls for adding/removing data rows.
+    - Sections for inputting specific return periods or wind speeds for querying.
+    - A button to trigger Gumbel fit calculation and plotting.
+    - A display area for the calculated Gumbel parameters.
+- A right panel displaying:
+    - An embedded Matplotlib canvas with the interactive Gumbel plot.
+    - The standard Matplotlib navigation toolbar.
+    - A checkbox to toggle the plot's x-axis scale (log/linear).
+- A status bar at the bottom for user feedback and clicked plot coordinates.
 
 ---
 
 ## Typical Workflow
-1. **Enter Data**: Input known wind speed and return period data points.
-2. **Fit Distribution**: The application automatically calculates Gumbel parameters \( \mu \) and \( \alpha \).
-3. **Explore Interactively**: View the plotted Gumbel curve. Click on the graph to explore wind speed/return period relationships.
+1. **Enter Data**: Input known wind speed and return period data points using the table. Add/remove rows as needed. Alternatively, load data from a previously saved `.gblproj` file.
+2. **Calculate Fit & Plot**: Click the "Calculate Gumbel Fit & Plot" button. The Gumbel parameters (\(\mu\) and \(1/\alpha\)) are calculated and displayed, and the plot is updated.
+3. **Explore Interactively**: View the plotted Gumbel curve. Use the Matplotlib toolbar to zoom/pan. Click on the graph to explore wind speed/return period relationships shown in the status bar. Toggle the x-axis scale.
 4. **Query Specific Points**:
-   - Enter desired return periods to find corresponding wind speeds.
-   - Enter desired wind speeds to find corresponding return periods.
-   - These points will be marked on the graph.
-5. **Generate Report**: Create a PDF document summarizing all inputs, calculations, theoretical background, and plots.
+   - Enter a desired return period (> 1 year) and click "Find Wind Speed".
+   - Enter a desired wind speed (> 0 m/s) and click "Find Return Period".
+   - Queried points are marked on the graph with annotations and guide lines.
+5. **Generate Report**: Click the "Export to PDF" button (or use the File menu) to create a PDF document summarising all inputs, calculations, theoretical background, the annotated plot, and a summary of plotted points.
+6. **Save Project**: Use the "Save Project" button (or File menu) to save the current input data, results, and settings for later use.
 
 ---
 
-## Setup Instructions (Windows + VS Code)
+## Setup Instructions
 
-### 1. Create a Virtual Environment
+### 1. Create a Virtual Environment (Recommended)
 ```bash
 python -m venv venv
-```
 
 ### 2. Activate the Virtual Environment
-```bash
-venv\Scripts\activate
-```
+   - **Windows:** Use `venv\Scripts\activate`
+   - **macOS/Linux:** Use `source venv/bin/activate`
 
 ### 3. Install Required Packages
-```bash
-pip install PySide6 matplotlib numpy pandas reportlab
-```
+   Run `pip install PySide6 matplotlib numpy pandas reportlab`
 
 ---
 
 ## How to Run
-In your VS Code terminal, ensure your virtual environment is activated and run:
-```bash
-python gumbel_wind_app.py
-```
+
+In your terminal, ensure your virtual environment is activated and run:
+
+`python gumbel.py`
+
+(Assuming your script is named `gumbel.py`)
 
 ---
 
 ## Notes
-- Graph supports both **linear and logarithmic** return period views.
-- All calculations follow the **Gumbel extreme value distribution**:
-  \[ V_T = \mu + \frac{1}{\alpha} \cdot y_T \quad \text{where} \quad y_T = -\ln(-\ln(1 - 1/T)) \]
+- The interactive graph supports both **linear and logarithmic** return period views.
+- All calculations follow the **Gumbel extreme value distribution (Type I EVD)**:
+  $$ V_T = \mu + \frac{1}{\alpha} \cdot y_T \quad \text{where} \quad y_T = -\ln(-\ln(1 - 1/T)) $$
   - \( V_T \): Wind speed for return period T
-  - \( T \): Return period in years
+  - \( T \): Return period in years (must be > 1 for the formula)
   - \( \mu \): Location parameter of the Gumbel distribution
-  - \( \alpha \): Scale parameter of the Gumbel distribution
-  - \( y_T \): Reduced variate for return period T
+  - \( 1/\alpha \): Scale parameter of the Gumbel distribution
+  - \( y_T \): Reduced Gumbel variate for return period T
 
 ---
 
 ## PDF Report Includes:
-- **Input Data Summary**: Table of user-provided wind speeds and return periods.
-- **Gumbel Parameters**: Calculated \( \mu \) (location) and \( \alpha \) (scale) parameters.
-- **Queried Points**: Table of user-specified return periods/wind speeds and their calculated counterparts.
-- **Theoretical Background**: Explanation of the Gumbel distribution and relevant equations.
-- **Live Calculations**: Step-by-step calculations for queried points.
-- **Graphs**:
-    - Plot of wind speed vs. return period (linear scale).
-    - Plot of wind speed vs. return period (logarithmic scale).
-    - Plots will include markings for user-queried points.
-- (Planned) Embedding of plot images directly in the PDF.
+- **Input Data Summary**: Table of user-provided wind speeds and return periods used for the fit.
+- **Gumbel Parameters**: Calculated \(\mu\) (location) and \(1/\alpha\) (scale) parameters.
+- **Queried Points**: Table summarising specific user-queried return periods/wind speeds and their calculated counterparts.
+- **Theoretical Background & Derivation**: Detailed explanation of EVT, GEV, the Gumbel distribution, return period definition, and step-by-step derivation of the \(V_T\) formula.
+- **Plot**: An embedded image of the Wind Speed vs. Return Period graph, matching the current GUI view (log/linear scale) and including annotations for input data and queried points, plus guide lines for queries.
+- **Plot Summary**: A textual summary of the points annotated on the included graph.
 
 ---
 
 ## Future Enhancements
-- **UI Polish**: Further refinements to the user interface for a more professional look and feel.
-- **Advanced Plot Customization**: Options for changing colors, line styles, labels, etc.
-- **Project Files**: Ability to save and load input data and session settings.
-- **Error Handling**: More robust error checking and user feedback.
-- **Internationalization**: Support for multiple languages.
-- **Data Import/Export**: Options to import data from CSV/Excel and export results.
+- **Advanced UI Polish**: Further refinements to widget spacing, styling, and visual feedback.
+- **Advanced Plot Customisation**: User options for changing colours, line styles, labels, etc.
+- **Error Handling**: More specific feedback for calculation edge cases or invalid data combinations.
+- **Internationalisation**: Support for multiple languages in the UI and reports.
+- **Data Import/Export**: Options to import data from CSV/Excel and export results beyond the project file format.
+- **Alternative Fitting Methods**: Option to use Maximum Likelihood Estimation (MLE) for parameter fitting.
 
 ---
 
-## License
-This tool is released under the MIT License. Modify and use freely.
+## Licence
+This tool is released under the MIT Licence. Modify and use freely.
