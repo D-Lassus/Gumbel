@@ -56,7 +56,6 @@ The application features a customised borderless user interface with:
 ## Setup Instructions
 
 ### 1. Create a Virtual Environment (Recommended)
-```bash
 python -m venv venv
 
 ### 2. Activate the Virtual Environment
